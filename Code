@@ -1,0 +1,46 @@
+import requests
+
+def fetch_webpage(url):
+    """
+    Fetches the HTML content of a given URL.
+
+    Args:
+        url (str): The URL of the webpage to fetch.
+
+    Returns:
+        str: The HTML content of the webpage if successful, None otherwise.
+    """
+    try:
+        # Make an HTTP GET request to the provided URL with a timeout
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx or 5xx)
+        print(f"Successfully fetched content from {url}")
+        return response.text
+    except requests.exceptions.MissingSchema:
+        print(f"Error: Invalid URL format. Missing schema (e.g., 'http://' or 'https://'). URL provided: {url}")
+        return None
+    except requests.exceptions.InvalidURL:
+        print(f"Error: The URL provided is malformed. URL provided: {url}")
+        return None
+    except requests.exceptions.ConnectionError as e:
+        print(f"Error: Could not connect to the server. Check your internet connection or the URL. Details: {e}")
+        return None
+    except requests.exceptions.Timeout as e:
+        print(f"Error: The request timed out after 10 seconds. Details: {e}")
+        return None
+    except requests.exceptions.RequestException as e:
+        print(f"An unexpected request error occurred: {e}")
+        return None
+
+# Prompt the user for a URL
+user_url = input("Please enter a website URL (e.g., https://www.google.com): ")
+
+# Fetch the webpage content
+html_content = fetch_webpage(user_url)
+
+# Display the entire content if successful
+if html_content:
+    print("\n--- Fetched HTML content ---")
+    print(html_content)
+else:
+    print("\nFailed to fetch webpage content.")
